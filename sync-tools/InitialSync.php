@@ -138,8 +138,10 @@ class InitialSync extends Command
             // Queue jobs for this chunk
             $batches = array_chunk($chunk, $batchSize);
             foreach ($batches as $batch) {
-                SyncBlockchainBlock::dispatch($batch)->onQueue('blockchainCrawler');
-                $jobsQueued++;
+                foreach ($batch as $blockHeight) {
+                    SyncBlockchainBlock::dispatch($blockHeight)->onQueue('blockchainCrawler');
+                    $jobsQueued++;
+                }
             }
             
             $processed = ($chunkIndex + 1) * $chunkSize;
